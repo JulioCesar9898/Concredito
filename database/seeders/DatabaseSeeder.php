@@ -1,0 +1,50 @@
+<?php
+namespace Database\Seeders;
+use Illuminate\Database\Seeder;
+//use database\seeds\NotesTableSeeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        //$this->call(MenusTableSeeder::class);
+        //$this->call(UsersAndNotesSeeder::class);
+        /*
+        $this->call('UsersAndNotesSeeder');
+        $this->call('MenusTableSeeder');
+        $this->call('FolderTableSeeder');
+        $this->call('ExampleSeeder');
+        $this->call('BREADSeeder');
+        $this->call('EmailSeeder');
+        */
+        $this->call([
+          
+            UsersAndNotesSeeder::class,
+            MenusTableSeeder::class,
+            FolderTableSeeder::class,
+            ExampleSeeder::class,
+            BREADSeeder::class,
+            EmailSeeder::class,
+           // CategoriaTableSedeer::class,
+            //LigaTableSedeer::class,
+          //TarjetaTableSedeer::class,
+          //EquipoTableSedeer::class,
+          //GolTableSedeer::class,
+         
+            //CanchaTableSedeer::class,
+           // PartidoTableSedeer::class,
+            //CategoriaLigaTableSedeer::class,
+           // EquipoPartido::class, 
+           // EquipoGol::class,
+           // EquipoTarjeta::class,
+           // EquipoUser::class,
+           // UserTableSedeer::class,
+        
+        ]);
+    }
+}

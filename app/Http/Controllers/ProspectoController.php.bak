@@ -1,0 +1,160 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Models\Prospecto;
+use App\Models\Documento;
+use Illuminate\Http\Request;
+use File;
+
+use Illuminate\Support\Facades\DB;
+
+class ProspectoController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $users = DB::table('prospecto')
+        ->select('id','nom','apell_p','apell_m','status')
+        ->whereNull('deleted_at')
+        ->get();
+        return response()->json( $users);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+     /* $validatedData = $request->validate([
+            'nom' => 'required',
+            'apell_p' => 'required',
+            'calle_' => 'required',
+            'numero' => 'required',
+            'colonia' => 'required',
+            'cp' => 'required',
+            'telefono' => 'required',
+            'RFC' => 'required',
+           
+            'status' => 'required',
+
+            ]);*/
+            $prospecto = new Prospecto();
+            $prospecto->nom= $request->input('nom');
+            $prospecto->apell_p= $request->input('apell_p');
+            $prospecto->apell_m= $request->input('apell_m');
+            $prospecto->calle_= $request->input('calle_');
+            $prospecto->numero= $request->input('numero');
+            $prospecto->colonia= $request->input('colonia');
+            $prospecto->cp= $request->input('cp');
+            $prospecto->telefono= $request->input('telefono');
+            $prospecto->RFC= $request->input('RFC');
+            $prospecto->doc= 'doc';
+            $prospecto->status = 'enviado';
+         		  
+            $prospecto->save();		
+			
+            return response()->json(['status'=>'success']);  
+
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $prospecto = DB::table('prospecto')
+        ->select('id','nom','apell_p','apell_m','calle_','numero','colonia','cp','telefono','RFC','status')
+        ->where('id','=', $id)
+        ->first();
+		$documento = DB::table('document')
+        ->select('id','nombre_document','url_document','','status')
+        ->where('id_prospecto','=', $id)
+        ->get();
+		return response()->json(
+            array('success'=>true,
+            'prospecto'=>$prospecto,
+            'documento'=>$documento),200
+            );
+
+        // return response()->json($data, 200, []);
+        // return response()->json( $prospecto, $documento );
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+	
+	public function uploadFiles(Request $request)
+    {
+			$users = Prospecto::select('id')->orderBy('id', 'desc')->first();
+			$documento = new Documento();
+			$documento->id_prospecto= $users->id;
+			$image = $request->file('file');
+			if ($image) {
+				foreach($request->file('file') as $file)
+				{
+					$name=$file->getClientOriginalName();
+					$documento->nombre_document =$name;
+					$documento->ruta_document = $file->move(public_path().'/files/', $name);
+					$documento->url_document = $request->root().'/files/'.$name;
+					$data[] = $name;  
+				}
+			}
+			$file= new File();
+			$documento->status = '1';
+            $documento->save();
+
+			
+    }
+}
